@@ -1,0 +1,20 @@
+.vscode/*
+build/*
+data/*
+data_lfw/*
+job/*
+log/*
+result/*
+venv/*
+
+# Logs and databases #
+*.log
+*.qdrep
+*.sqlite
+
+# Compiled source #
+*.o
+*.so
+AMM
+cmd
+log*
