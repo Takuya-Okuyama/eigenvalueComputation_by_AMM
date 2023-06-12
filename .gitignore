@@ -2,10 +2,8 @@
 build/*
 data/*
 data_lfw/*
-job/*
-log/*
 result/*
-venv/*
+MemoryLayout/*
 
 # Logs and databases #
 *.log

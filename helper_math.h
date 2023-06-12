@@ -1277,6 +1277,13 @@ inline __host__ __device__ float dot(float4 a, float4 b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 }
+inline __host__ __device__ void add_dot(float &v, float4 a, float4 b)
+{
+    float t1 = fmaf(a.x, b.x, v);
+    float t2 = a.y * b.y;
+    t1 = fmaf(a.z, b.z, t1);
+    v = t1 + fmaf(a.w, b.w, t2);
+}
 
 inline __host__ __device__ int dot(int2 a, int2 b)
 {

@@ -88,6 +88,7 @@ __global__ __launch_bounds__(nthreads) void dots(
 
 template <int nthreads>
 __global__ __launch_bounds__(nthreads) void dotProduct_and_generate_x(
+    double *__restrict__ d_dots,
     double *__restrict__ d_eig,
     double *__restrict__ d_err,
     float *__restrict__ d_x,
@@ -137,6 +138,8 @@ __global__ __launch_bounds__(nthreads) void dotProduct_and_generate_x(
     double dscale = rsqrt(ret.y);
     *d_err = ret.z * dscale;
     scale = (float)dscale;
+
+    *d_dots = ret.x * dscale;
   }
   __syncthreads();
 

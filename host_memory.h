@@ -29,6 +29,9 @@ public:
   uint64_t step = 10;
   uint64_t vr_period = 0;
 
+  std::string str_vr_adaptive_threshold = "";
+  double vr_adaptive_threshold = 0.0f;
+
   std::string kernel = "exact";
   std::string matrixType = "gaussian_0.0_1.0";
   std::string filepath = "";
@@ -109,6 +112,12 @@ public:
       {
         vr_period = std::atoi(argv[++i]);
         variance_reduction = (vr_period > 0);
+      }
+      else if (!strcmp(argv[i], "-vr_adaptive"))
+      {
+        str_vr_adaptive_threshold = std::string(argv[++i]);
+        vr_adaptive_threshold = std::atof(str_vr_adaptive_threshold.c_str());
+        variance_reduction = (vr_adaptive_threshold > 0.0f);
       }
       else if (!strcmp(argv[i], "-verbose"))
       {

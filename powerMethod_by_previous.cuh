@@ -128,10 +128,13 @@ void powerMethod_by_previous(
   curandGenerateNormal(dm.gen, dm.dx, dm.m, 0.0, 1.0);
   normalize<nthreads><<<1, nthreads, 0, dm.stream_1>>>(dm.dx, dm.m);
 
+  double dot = 0.0;
   const int step = is_output ? p.step : p.vr_period;
   for (std::size_t i = 0; i < step; ++i)
   {
-    if (p.variance_reduction && (i + 1) % p.vr_period == 0)
+    if (p.variance_reduction &&
+        ((p.vr_period > 0 && (i + 1) % p.vr_period == 0) ||
+         (p.vr_adaptive_threshold > 0.0f && dot > 1.0 - p.vr_adaptive_threshold)))
     {
       cublasSgemv(dm.handle,
                   CUBLAS_OP_N,
@@ -160,11 +163,13 @@ void powerMethod_by_previous(
 
     constexpr int nthreads = 64;
     dotProduct_and_generate_x<nthreads><<<1, nthreads, 0, dm.stream_1>>>(
+        dm.d_dots,
         dm.d_eigs + i,
         dm.d_errs + i,
         dm.dx,
         dm.d_eigenvector,
         dm.m);
+    cudaMemcpy(&dot, dm.d_dots, sizeof(double), cudaMemcpyDefault);
 
     if (is_output)
     {

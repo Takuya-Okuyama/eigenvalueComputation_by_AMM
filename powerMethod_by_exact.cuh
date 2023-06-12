@@ -54,6 +54,7 @@ void powerMethod_by_exact(
 
     constexpr int nthreads = 64;
     dotProduct_and_generate_x<nthreads><<<1, nthreads, 0, dm.stream_1>>>(
+        dm.d_dots,
         dm.d_eigs + i,
         dm.d_errs + i,
         dm.dx,

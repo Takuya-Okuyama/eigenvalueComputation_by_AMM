@@ -137,6 +137,7 @@ struct device_memory
   void *d_tmp_inclusiveSum = nullptr;
   void *d_tmp_sort = nullptr;
 
+  double *d_dots = nullptr;
   double *d_eigs = nullptr;
   double *d_errs = nullptr;
   double *d_eigenvector = nullptr;
@@ -197,6 +198,7 @@ struct device_memory
     cudaMalloc((void **)&d_pos, sizeof(uint32_t) * m);
     cudaMalloc((void **)&d_sorted_pos, sizeof(uint32_t) * m);
 
+    cudaMalloc((void **)&d_dots, sizeof(double));
     cudaMalloc((void **)&d_eigs, sizeof(double) * p.step);
     cudaMalloc((void **)&d_errs, sizeof(double) * p.step);
     cudaMalloc((void **)&d_eigenvector, sizeof(double) * p.m);
@@ -260,7 +262,14 @@ struct device_memory
     if (p.kernel != "exact")
     {
       path_output += "_c=" + std::to_string(p.c);
-      path_output += "_vr=" + std::to_string(p.vr_period);
+      if (p.vr_adaptive_threshold == 0.0)
+      {
+        path_output += "_vr=" + std::to_string(p.vr_period);
+      }
+      else
+      {
+        path_output += "_vr=adaptive-" + p.str_vr_adaptive_threshold;
+      }
     }
     path_output += ".binary";
     ofs_output.open(path_output, std::ios::out | std::ios::binary);
@@ -294,6 +303,7 @@ struct device_memory
     cudaFree(d_tmp_inclusiveSum);
     cudaFree(d_tmp_sort);
 
+    cudaFree(d_dots);
     cudaFree(d_eigs);
     cudaFree(d_errs);
     cudaFree(d_eigenvector);
@@ -411,11 +421,6 @@ private:
         shift_and_scale<<<len / 128, 128>>>(d_ptr, len, param1, param2);
         convert_to_symmetry<<<len / 128, 128>>>(d_ptr, size);
       }
-
-      // if (true)
-      // {
-      //   round_matrix<<<len / 128, 128>>>(d_ptr, size);
-      // }
 
       find_offset<<<m / 128, 128>>>(dtmp, d_ptr, size);
 

@@ -95,10 +95,10 @@ __global__ __launch_bounds__(nthreads_per_block) void proposedAMM_kernel1(
       vload(regA[7], A + idx_ary.w);
       idx_ary += 4;
 
-      val.x += dot(regA[0], regx[0]);
-      val.y += dot(regA[1], regx[0]);
-      val.z += dot(regA[2], regx[0]);
-      val.w += dot(regA[3], regx[0]);
+      add_dot(val.x, regA[0], regx[0]);
+      add_dot(val.y, regA[1], regx[0]);
+      add_dot(val.z, regA[2], regx[0]);
+      add_dot(val.w, regA[3], regx[0]);
       i += 4;
 
       vload(regx[0], x + j + i);
@@ -111,10 +111,10 @@ __global__ __launch_bounds__(nthreads_per_block) void proposedAMM_kernel1(
       vload(regA[3], A + idx_ary.w);
       idx_ary += 4;
 
-      val.x += dot(regA[4], regx[1]);
-      val.y += dot(regA[5], regx[1]);
-      val.z += dot(regA[6], regx[1]);
-      val.w += dot(regA[7], regx[1]);
+      add_dot(val.x, regA[4], regx[1]);
+      add_dot(val.y, regA[5], regx[1]);
+      add_dot(val.z, regA[6], regx[1]);
+      add_dot(val.w, regA[7], regx[1]);
       i += 4;
     }
 
@@ -128,10 +128,15 @@ __global__ __launch_bounds__(nthreads_per_block) void proposedAMM_kernel1(
     vload(regA[7], A + idx_ary.w);
     idx_ary += 4;
 
-    val.x += dot(regA[0], regx[0]) + dot(regA[4], regx[1]);
-    val.y += dot(regA[1], regx[0]) + dot(regA[5], regx[1]);
-    val.z += dot(regA[2], regx[0]) + dot(regA[6], regx[1]);
-    val.w += dot(regA[3], regx[0]) + dot(regA[7], regx[1]);
+    add_dot(val.x, regA[0], regx[0]);
+    add_dot(val.y, regA[1], regx[0]);
+    add_dot(val.z, regA[2], regx[0]);
+    add_dot(val.w, regA[3], regx[0]);
+
+    add_dot(val.x, regA[4], regx[1]);
+    add_dot(val.y, regA[5], regx[1]);
+    add_dot(val.z, regA[6], regx[1]);
+    add_dot(val.w, regA[7], regx[1]);
   }
 
   if (sub_items > 0)
@@ -164,23 +169,23 @@ __global__ __launch_bounds__(nthreads_per_block) void proposedAMM_kernel1(
       vload(regA[7], A + idx_ary.w);
       idx_ary += 4;
 
-      val.x += dot(regA[0], regx[0]);
-      val.y += dot(regA[1], regx[0]);
-      val.z += dot(regA[2], regx[0]);
-      val.w += dot(regA[3], regx[0]);
+      add_dot(val.x, regA[0], regx[0]);
+      add_dot(val.y, regA[1], regx[0]);
+      add_dot(val.z, regA[2], regx[0]);
+      add_dot(val.w, regA[3], regx[0]);
 
       regx[0] = regx[1];
-      regx_memo[0] = regx_memo[1];
+      // regx_memo[0] = regx_memo[1];
       regA[0] = regA[4];
       regA[1] = regA[5];
       regA[2] = regA[6];
       regA[3] = regA[7];
     }
 
-    val.x += dot(regA[0], regx[0]);
-    val.y += dot(regA[1], regx[0]);
-    val.z += dot(regA[2], regx[0]);
-    val.w += dot(regA[3], regx[0]);
+    add_dot(val.x, regA[0], regx[0]);
+    add_dot(val.y, regA[1], regx[0]);
+    add_dot(val.z, regA[2], regx[0]);
+    add_dot(val.w, regA[3], regx[0]);
   }
 
   float4 ret = BlockReduce(temp_storage).Sum(val);

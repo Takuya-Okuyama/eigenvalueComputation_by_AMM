@@ -237,6 +237,7 @@ void powerMethod_by_proposed_v2(
 
     constexpr int nthreads = 64;
     dotProduct_and_generate_x<nthreads><<<1, nthreads, 0, dm.stream_1>>>(
+        dm.d_dots,
         dm.d_eigs + i,
         dm.d_errs + i,
         dm.dx,
@@ -277,6 +278,7 @@ void powerMethod_by_proposed_v2(
 
     constexpr int nthreads = 64;
     dotProduct_and_generate_x<nthreads><<<1, nthreads, 0, dm.stream_1>>>(
+        dm.d_dots,
         dm.d_eigs + (p.vr_period - 1),
         dm.d_errs + (p.vr_period - 1),
         dm.dx,
@@ -329,6 +331,7 @@ void powerMethod_by_proposed_v2(
 
     constexpr int nthreads = 64;
     dotProduct_and_generate_x<nthreads><<<1, nthreads, 0, dm.stream_1>>>(
+        dm.d_dots,
         dm.d_eigs + i,
         dm.d_errs + i,
         dm.dx,
